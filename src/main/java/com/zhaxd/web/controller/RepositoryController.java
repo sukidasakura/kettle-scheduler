@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.zhaxd.common.kettle.repository.RepositoryUtil;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.repository.kdr.KettleDatabaseRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,63 +45,73 @@ public class RepositoryController {
 
 	@RequestMapping("database/getJobTree.shtml")
 	public String getJobTree(Integer repositoryId){
+		KettleDatabaseRepository kettleDatabaseRepository = null;
 		List<RepositoryTree> repositoryTreeList = new ArrayList<>();
 		try {
 			repositoryTreeList = dataBaseRepositoryService.getTreeList(repositoryId);
 		} catch (KettleException e) {
-			e.printStackTrace();
 			KRepository kRepository = dataBaseRepositoryService.getKRepository(repositoryId);
 			try { //如果连不上，则重新创建这个库的连接。
-				RepositoryUtil.connectionRepository(kRepository);
+				kettleDatabaseRepository = RepositoryUtil.connectionRepository(kRepository);
 				repositoryTreeList = dataBaseRepositoryService.getTreeList(repositoryId);
 			} catch (KettleException e1) {
 				e1.printStackTrace();
 			}
 		}
-			List<RepositoryTree> newRepositoryTreeList = new ArrayList<RepositoryTree>();
-			for(RepositoryTree repositoryTree : repositoryTreeList){
-				if ("0".equals(repositoryTree.getParent())){
-					repositoryTree.setParent("#");
-				}
-				if (repositoryTree.getId().indexOf("@") > 0){
-					repositoryTree.setIcon("none");
-				}
-				if (Constant.TYPE_TRANS.equals(repositoryTree.getType())){
-					Map<String,String> stateMap = new HashMap<String, String>();
-					stateMap.put("disabled", "false");
-					repositoryTree.setState(stateMap);
-				}
-				newRepositoryTreeList.add(repositoryTree);				
+		List<RepositoryTree> newRepositoryTreeList = new ArrayList<RepositoryTree>();
+		for (RepositoryTree repositoryTree : repositoryTreeList) {
+			if ("0".equals(repositoryTree.getParent())) {
+				repositoryTree.setParent("#");
 			}
-			return JsonUtils.objectToJson(newRepositoryTreeList);
+			if (repositoryTree.getId().indexOf("@") > 0) {
+				repositoryTree.setIcon("none");
+			}
+			if (Constant.TYPE_TRANS.equals(repositoryTree.getType())) {
+				Map<String, String> stateMap = new HashMap<String, String>();
+				stateMap.put("disabled", "false");
+				repositoryTree.setState(stateMap);
+			}
+			newRepositoryTreeList.add(repositoryTree);
+		}
+		RepositoryUtil.disConnectionRepository(kettleDatabaseRepository, repositoryId);
+		return JsonUtils.objectToJson(newRepositoryTreeList);
 
 //		return null;
 	}
 	
 	@RequestMapping("database/getTransTree.shtml")
 	public String getTransTree(Integer repositoryId){
+		KettleDatabaseRepository kettleDatabaseRepository = null;
+		List<RepositoryTree> repositoryTreeList = new ArrayList<>();
 		try {
-			List<RepositoryTree> repositoryTreeList = dataBaseRepositoryService.getTreeList(repositoryId);
-			List<RepositoryTree> newRepositoryTreeList = new ArrayList<RepositoryTree>();
-			for(RepositoryTree repositoryTree : repositoryTreeList){
-				if ("0".equals(repositoryTree.getParent())){
-					repositoryTree.setParent("#");
-				}
-				if (repositoryTree.getId().indexOf("@") > 0){
-					repositoryTree.setIcon("none");
-				}
-				if (Constant.TYPE_JOB.equals(repositoryTree.getType())){
-					Map<String,String> stateMap = new HashMap<String, String>();
-					stateMap.put("disabled", "false");
-					repositoryTree.setState(stateMap);
-				}
-				newRepositoryTreeList.add(repositoryTree);				
-			}
-			return JsonUtils.objectToJson(newRepositoryTreeList);
+			repositoryTreeList = dataBaseRepositoryService.getTreeList(repositoryId);
 		} catch (KettleException e) {
-			e.printStackTrace();
+			KRepository kRepository = dataBaseRepositoryService.getKRepository(repositoryId);
+			try { //如果连不上，则重新创建这个库的连接。
+				kettleDatabaseRepository = RepositoryUtil.connectionRepository(kRepository);
+				repositoryTreeList = dataBaseRepositoryService.getTreeList(repositoryId);
+			} catch (KettleException e1) {
+				e1.printStackTrace();
+			}
 		}
-		return null;		
+		List<RepositoryTree> newRepositoryTreeList = new ArrayList<RepositoryTree>();
+		for (RepositoryTree repositoryTree : repositoryTreeList) {
+			if ("0".equals(repositoryTree.getParent())) {
+				repositoryTree.setParent("#");
+			}
+			if (repositoryTree.getId().indexOf("@") > 0) {
+				repositoryTree.setIcon("none");
+			}
+			if (Constant.TYPE_JOB.equals(repositoryTree.getType())) {
+				Map<String, String> stateMap = new HashMap<String, String>();
+				stateMap.put("disabled", "false");
+				repositoryTree.setState(stateMap);
+			}
+			newRepositoryTreeList.add(repositoryTree);
+		}
+		RepositoryUtil.disConnectionRepository(kettleDatabaseRepository, repositoryId);
+		return JsonUtils.objectToJson(newRepositoryTreeList);
+//		return null;
 	}
 	
 	@RequestMapping("database/ckeck.shtml")

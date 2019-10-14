@@ -106,7 +106,6 @@ public class JobQuartz implements InterruptableJob {
                 directory = kettleDatabaseRepository.loadRepositoryDirectoryTree()
                         .findDirectory(jobPath);
             } catch (KettleException e1) {
-                e1.printStackTrace();
                 kettleDatabaseRepository  = RepositoryUtil.connectionRepository(kRepository);
                 directory = kettleDatabaseRepository.loadRepositoryDirectoryTree()
                         .findDirectory(jobPath);
@@ -162,6 +161,7 @@ public class JobQuartz implements InterruptableJob {
                     }
                 }
             }
+            RepositoryUtil.disConnectionRepository(kettleDatabaseRepository, repositoryId);
         }
     }
 

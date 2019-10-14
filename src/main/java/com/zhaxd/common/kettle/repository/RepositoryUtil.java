@@ -50,6 +50,7 @@ public class RepositoryUtil {
 		for (RepositoryTree repositoryTree : repositoryTreeList){
 			System.out.println(repositoryTree);
 		}
+		kettleDatabaseRepository.disconnect();
 	}
 	
 	
@@ -92,7 +93,7 @@ public class RepositoryUtil {
 	
 	/**
 	 * @Title disConnectionRepository
-	 * @Description 断开资源库并删除缓存对象
+	 * @Description 断开资源库[--并删除缓存对象]
 	 * @param repository
 	 * @param ID
 	 * @return void
@@ -100,7 +101,7 @@ public class RepositoryUtil {
 	public static void disConnectionRepository(KettleDatabaseRepository repository, Integer ID){
 		repository.disconnect();
 		repository.clearSharedObjectCache();
-		KettleDatabaseRepositoryCatch.remove(ID);
+//		KettleDatabaseRepositoryCatch.remove(ID);
 	}
 	
 	/**

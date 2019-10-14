@@ -104,7 +104,6 @@ public class TransQuartz implements InterruptableJob {
                 directory = kettleDatabaseRepository.loadRepositoryDirectoryTree()
                         .findDirectory(transPath);
             } catch (KettleException e1) {
-                e1.printStackTrace();
                 kettleDatabaseRepository  = RepositoryUtil.connectionRepository(kRepository);
                 directory = kettleDatabaseRepository.loadRepositoryDirectoryTree()
                         .findDirectory(transPath);
@@ -159,6 +158,7 @@ public class TransQuartz implements InterruptableJob {
                     }
                 }
             }
+            RepositoryUtil.disConnectionRepository(kettleDatabaseRepository, repositoryId);
         }
     }
 
