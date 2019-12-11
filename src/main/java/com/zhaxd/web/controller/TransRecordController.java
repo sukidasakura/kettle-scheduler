@@ -46,7 +46,7 @@ public class TransRecordController {
 			return ResultDto.success(logContent.replace("\r\n", "<br/>"));
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return ResultDto.fail(e.getMessage());
 		} 
 	}
 }

@@ -152,13 +152,23 @@
                     "recordId": row.recordId
                 },
                 success: function (data) {
-                    console.log(data.data);
-                    layer.open({
-                        type: 1,
-                        title: "作业日志记录",
-                        area: ['50%', '50%'], //宽高
-                        content: data.data
-                    });
+                    if (data.status == "success") {
+                        console.log(data.data);
+                        layer.open({
+                            type: 1,
+                            title: "作业日志记录",
+                            area: ['50%', '50%'], //宽高
+                            content: data.data
+                        });
+                    } else {
+                        console.log(data.message);
+                        layer.open({
+                            type: 1,
+                            title: "作业日志记录",
+                            area: ['50%', '50%'], //宽高
+                            content: data.message
+                        });
+                    }
                 },
                 error: function () {
                     alert("系统出现问题，请联系管理员");
